@@ -99,6 +99,7 @@ export default function Homepage({ url }) {
               <th>Name</th>
               <th>Email</th>
               <th>Age</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
