@@ -81,10 +81,11 @@ export default function UpdateUser({ url }) {
   }
 
   function handleInputChange(e) {
-    const { id, value } = e.target;
-    setDataUser((prev) => ({
-      ...prev,
-      [id]: value,
+    const { id, value, type } = e.target;
+    const parsedValue = type === "Number" ? parseInt(value, 10) || "" : value;
+    setDataUser((prevDataUser) => ({
+      ...prevDataUser,
+      [id]: parsedValue,
     }));
   }
 
@@ -125,10 +126,10 @@ export default function UpdateUser({ url }) {
               Age
             </label>
             <input
-              value={dataUser.age}
+              value={dataUser.age || ""}
               onChange={handleInputChange}
               type="Number"
-              id="Age"
+              id="age"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-slate-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-red-500 dark:focus:border-red-500"
               placeholder="enter your Age"
               required

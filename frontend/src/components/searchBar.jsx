@@ -7,11 +7,30 @@ export default function SearchBar({ inputData, outputData }) {
   const url = "http://localhost:3000";
   async function fetchUserUuid(e) {
     e.preventDefault();
-    inputData(searchUuid);
+    try {
+      inputData(searchUuid);
 
-    const { data } = await axios.get(`${url}/user/${searchUuid}`);
-    console.log(data.fetchUserById);
-    outputData(data.fetchUserById);
+      const { data } = await axios.get(`${url}/user/${searchUuid}`);
+      console.log(data.fetchUserById);
+      outputData(data.fetchUserById);
+    } catch (error) {
+      console.log(error);
+      Toastify({
+        text: error.response?.data?.error || "Error fetching user data",
+        duration: 2000,
+        newWindow: true,
+        close: true,
+        gravity: "top",
+        position: "left",
+        stopOnFocus: true,
+        style: {
+          background: "#EF4C54",
+          color: "#17202A",
+          boxShadow: "0 5px 10px black",
+          fontWeight: "bold",
+        },
+      }).showToast();
+    }
   }
 
   return (

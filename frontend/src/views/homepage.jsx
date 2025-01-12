@@ -6,7 +6,8 @@ import SearchBar from "../components/searchBar";
 
 export default function Homepage({ url }) {
   const [userData, setUserData] = useState([]);
-  console.log(userData);
+  const [searchedUser, setSearchedUser] = useState(null);
+  const [searchUuid, setSearchUuid] = useState("");
 
   async function fetchAllProduct() {
     try {
@@ -40,8 +41,7 @@ export default function Homepage({ url }) {
       const response = await axios.delete(`${url}/user/${id}`);
       console.log(response);
 
-      setUser(user.filter((user) => user.id !== id));
-
+      await fetchAllProduct();
       Toastify({
         text: `id ${id} success to delete`,
         duration: 2000,
@@ -60,7 +60,7 @@ export default function Homepage({ url }) {
     } catch (error) {
       console.log(error);
       Toastify({
-        text: error.response.data.message,
+        text: error.response?.data?.error || "Error fetching user data",
         duration: 2000,
         newWindow: true,
         close: true,
@@ -75,6 +75,14 @@ export default function Homepage({ url }) {
         },
       }).showToast();
     }
+  }
+
+  function handleInputData(uuid) {
+    setSearchUuid(uuid);
+  }
+
+  function handleOutputData(user) {
+    setSearchedUser(user);
   }
 
   useEffect(() => {
@@ -94,25 +102,45 @@ export default function Homepage({ url }) {
             </tr>
           </thead>
           <tbody>
-            {userData?.map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.age}</td>
+            {searchedUser ? (
+              <tr key={searchedUser.id}>
+                <td>{searchedUser.id}</td>
+                <td>{searchedUser.name}</td>
+                <td>{searchedUser.email}</td>
+                <td>{searchedUser.age}</td>
                 <td className="flex gap-2">
-                  <Link to={`/edit/${user.id}`}>
+                  <Link to={`/edit/${searchedUser.id}`}>
                     <button className="btn btn-sm btn-primary">Edit</button>
                   </Link>
                   <button
                     className="btn btn-sm btn-error"
-                    onClick={() => deleteUser(user.id)}
+                    onClick={() => deleteUser(searchedUser.id)}
                   >
                     Delete
                   </button>
                 </td>
               </tr>
-            ))}
+            ) : (
+              userData?.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.name}</td>
+                  <td>{user.email}</td>
+                  <td>{user.age}</td>
+                  <td className="flex gap-2">
+                    <Link to={`/edit/${user.id}`}>
+                      <button className="btn btn-sm btn-primary">Edit</button>
+                    </Link>
+                    <button
+                      className="btn btn-sm btn-error"
+                      onClick={() => deleteUser(user.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
         <div className="items-center justify-items-center mt-4 grid grid-cols-2">
@@ -120,7 +148,10 @@ export default function Homepage({ url }) {
             <button className="btn btn-success">Add User</button>
           </Link>
           <div className="w-full">
-            <SearchBar />
+            <SearchBar
+              inputData={handleInputData}
+              outputData={handleOutputData}
+            />
           </div>
         </div>
       </div>
