@@ -5,6 +5,7 @@ class UserController {
   static async fetchAllUser(req, res, next) {
     try {
       const fetchAllUser = await User.findAll();
+      console.log(fetchAllUser, '<<<<<< ini data fetch all user');
       res.status(200).json({
         message: 'All users have been fetched',
         statusCode: 200,
@@ -38,6 +39,7 @@ class UserController {
     try {
       const { name, email, age } = req.body;
       const newUser = await User.create({ name, email, age });
+      console.log(newUser, '<<<<<< ini new user');
       res.status(201).json({
         message: 'User has been created',
         statusCode: 201,
